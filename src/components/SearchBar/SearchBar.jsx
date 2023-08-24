@@ -10,15 +10,13 @@ import {
 } from './SearchBar.styled';
 
 const SearchBar = ({ onSubmit }) => {
-  // const [searchName, setSearchName] = useState('');
   const [inputValue, setInputValue] = useState('');
 
   const handleChange = event => setInputValue(event.target.value);
 
   const handleSubmit = event => {
     event.preventDefault();
-    const searchQuery = event.target.elements.searchName.value.trim();
-    console.log(event.target.elements.searchName);
+    const searchQuery = inputValue.trim();
     onSubmit(searchQuery);
     event.target.reset();
   };
