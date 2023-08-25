@@ -13,31 +13,30 @@ const App = () => {
   const [images, setImages] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalImages, setTotalImages] = useState(0);
 
   useEffect(() => {
     if (searchName === '') {
       return;
     }
-    setIsLoading(true);
 
     async function addImages() {
       try {
         setIsLoading(true);
 
-        const data = await API.getImages(searchName, currentPage);
+        const { images, totalImages } = await API.getImages(
+          searchName,
+          currentPage
+        );
 
-        if (data.hits.length === 0) {
+        if (images.length === 0) {
           return toast.info('Sorry image not found...', {
             position: toast.POSITION.TOP_RIGHT,
           });
         }
 
-        const normalizedImages = API.normalizedImages(data.hits);
-
-        setImages(prevImages => [...prevImages, ...normalizedImages]);
-        setIsLoading(false);
-        setTotalPages(Math.ceil(data.totalHits / 12));
+        setImages(prevImages => [...prevImages, ...images]);
+        setTotalImages(totalImages);
       } catch (error) {
         toast.error('Something went wrong!', {
           position: toast.POSITION.TOP_RIGHT,
@@ -62,7 +61,7 @@ const App = () => {
     setSearchName(query);
     setImages([]);
     setCurrentPage(1);
-    setTotalPages(0);
+    setTotalImages(0);
   };
 
   return (
@@ -83,7 +82,7 @@ const App = () => {
         </p>
       )}
       {isLoading && <Loader />}
-      {images.length > 0 && totalPages !== currentPage && !isLoading && (
+      {totalImages !== images.length && !isLoading && (
         <Button onClick={loadMore} />
       )}
       <ScrollButton />
